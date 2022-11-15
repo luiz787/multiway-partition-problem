@@ -1,8 +1,4 @@
-#[derive(Eq, Clone, PartialEq, Debug)]
-struct Subset {
-    numbers: Vec<u64>,
-    sum: u64
-}
+use crate::common::{Subset, Partition};
 
 impl Subset {
     fn merge(mut s1: Subset, mut s2: Subset) -> Subset {
@@ -13,17 +9,12 @@ impl Subset {
     }
 }
 
-#[derive(Eq, Clone, PartialEq, Debug)]
-pub struct Partition {
-    subsets: Vec<Subset>
-}
-
 impl Partition {
     fn min_max_sum_difference(&self) -> u64 {
         let maximum_sum = self.subsets.iter().max_by_key(|s| s.sum).expect("Partition has no subset").sum;
         let minimum_sum = self.subsets.iter().min_by_key(|s| s.sum).expect("Partition has no subset").sum;
 
-        maximum_sum - minimum_sum
+        (maximum_sum - minimum_sum) as u64
     }
 
     fn merge(mut p1: Partition, mut p2: Partition) -> Partition {
@@ -67,7 +58,7 @@ pub fn karmarkar_karp(nums: Vec<u64>, k: u64) -> Partition {
 }
 
 fn create_initial_partition(k: u64, n: u64) -> Partition {
-    let mut partition: Vec<Subset> = vec![Subset { numbers: vec![n], sum: n }];
+    let mut partition: Vec<Subset> = vec![Subset { numbers: vec![n], sum: n as i64 }];
     for _ in 1..k {
         partition.push(Subset { numbers: Vec::new(), sum: 0 });
     }
