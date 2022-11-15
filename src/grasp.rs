@@ -29,8 +29,12 @@ pub fn greedy_heuristic(nums: &Vec<u64>, k: u64) -> Partition {
     for n in nums {
         s.push(n);
     }
+    let mut i = 0;
 
     while !s.is_empty() {
+        println!("Greedy iter {}", i);
+        i+=1;
+
         let mut candidates = Vec::new();
         for _ in 0..CANDIDATES_LIST_SIZE.min(s.len()) {
             candidates.push(s.pop().expect("Expected heap to be non-empty"))
@@ -57,7 +61,10 @@ pub fn greedy_heuristic(nums: &Vec<u64>, k: u64) -> Partition {
         }
     }
 
-    Partition { subsets: parts }
+    let result = Partition { subsets: parts };
+    println!("Greedy quality: {}", result.solution_quality());
+
+    result
 }
 
 pub fn grasp(nums: Vec<u64>, k: u64, max_iter: u64) -> Partition {
@@ -84,7 +91,10 @@ pub fn grasp(nums: Vec<u64>, k: u64, max_iter: u64) -> Partition {
 
 fn local_search(solution: Partition) -> Partition {
     let mut curr = solution;
+    let mut iter = 0;
     loop {
+        println!("Local Search iter {}", iter);
+        iter += 1;
         let neighbor = best_neighbor(&curr);
         let neighbor_is_better = neighbor.solution_quality() < curr.solution_quality();
 
@@ -96,7 +106,8 @@ fn local_search(solution: Partition) -> Partition {
 }
 
 fn best_neighbor(solution: &Partition) -> Partition {
-    let mut neighbors = Vec::new();
+    let mut best_neighbor: Option<Partition> = Option::None;
+    let mut best_quality: Option<u64> = Option::None;
     for i in 0..(solution.subsets.len() - 1) {
         for j in 0..solution.subsets[i].numbers.len() {
             for k in 0..solution.subsets[i + 1].numbers.len() {
@@ -109,14 +120,22 @@ fn best_neighbor(solution: &Partition) -> Partition {
                 current_neighbor.subsets[i].sum += (tmp2 as i64) - (tmp as i64);
                 current_neighbor.subsets[i + 1].numbers[k] = tmp;
                 current_neighbor.subsets[i + 1].sum += (tmp as i64) - (tmp2 as i64);
+                let current_quality = current_neighbor.solution_quality();
 
-                neighbors.push(current_neighbor);
+                let is_better = match best_quality {
+                    Some(quality) => current_quality < quality,
+                    None => true
+                };
+
+                if is_better {
+                    best_neighbor = Option::Some(current_neighbor);
+                    best_quality = Option::Some(current_quality);
+                }
             }
         }
     }
+    
 
-    neighbors
-        .into_iter()
-        .min_by(|p1, p2| p1.solution_quality().cmp(&p2.solution_quality()))
+    best_neighbor
         .expect("Expected partition to have neighbors")
 }

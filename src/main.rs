@@ -6,6 +6,10 @@ pub mod grasp;
 mod common;
 
 fn main() {
-    let result = grasp::grasp(vec![8,7,6,5,4], 2, 200);
+    let mut input = Vec::new();
+    for _ in 0..1000 {
+        input.push(1);
+    }
+    let result = karmarkar_karp::karmarkar_karp(input, 2);
     println!("{:#?}", result);
 }
