@@ -61,7 +61,7 @@ pub fn greedy_heuristic(nums: &Vec<u64>, k: u64) -> Partition {
         }
     }
 
-    let result = Partition { subsets: parts };
+    let result = Partition { subsets: parts, maximum_sum: 0, minimum_sum: 0 };
     println!("Greedy quality: {}", result.solution_quality());
 
     result

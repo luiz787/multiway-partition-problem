@@ -1,6 +1,9 @@
-#[derive(Eq, Clone, PartialEq, Debug)]
+#[derive(Eq, Clone, Debug)]
 pub struct Partition {
-    pub subsets: Vec<Subset>
+    // TODO: change to heap
+    pub subsets: Vec<Subset>,
+    pub maximum_sum: u64,
+    pub minimum_sum: u64,
 }
 
 #[derive(Eq, Clone, PartialEq, Debug)]
