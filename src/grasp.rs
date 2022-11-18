@@ -35,11 +35,7 @@ pub fn greedy_heuristic(nums: &Vec<u64>, k: u64) -> Partition {
     for n in nums {
         s.push(n);
     }
-    let mut i = 0;
-
     while !s.is_empty() {
-        //println!("Greedy iter {}", i);
-        i+=1;
 
         let mut candidates = Vec::new();
         for _ in 0..CANDIDATES_LIST_SIZE.min(s.len()) {
@@ -73,12 +69,12 @@ pub fn greedy_heuristic(nums: &Vec<u64>, k: u64) -> Partition {
         subsets: parts,
         maximum_sum: maximum_sum
     };
-    println!("Greedy quality: {}", result.solution_quality());
+    // println!("Greedy quality: {}", result.solution_quality());
 
     result
 }
 
-pub fn grasp(nums: Vec<u64>, k: u64, max_iter: u64) -> Partition {
+pub fn grasp(nums: &Vec<u64>, k: u64, max_iter: u64) -> Partition {
     let mut best: Option<Partition> = Option::None;
     let mut i = 0;
     while i < max_iter {

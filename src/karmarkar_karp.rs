@@ -82,9 +82,9 @@ impl PartialEq for Partition {
     }
 }
 
-pub fn karmarkar_karp(nums: Vec<u64>, k: u64) -> Partition {
+pub fn karmarkar_karp(nums: &Vec<u64>, k: u64) -> Partition {
     let mut parts: BinaryHeap<Partition> = BinaryHeap::with_capacity(nums.len());
-    for n in nums {
+    for &n in nums {
         parts.push(create_initial_partition(k, n));
     }
 
