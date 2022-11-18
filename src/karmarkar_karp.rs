@@ -1,5 +1,17 @@
-use crate::common::{Partition, Subset};
 use std::{cmp::Ordering, collections::BinaryHeap};
+
+#[derive(Eq, Clone, Debug)]
+pub struct Partition {
+    pub subsets: Vec<Subset>,
+    pub maximum_sum: u64,
+    pub minimum_sum: u64,
+}
+
+#[derive(Eq, Clone, PartialEq, Debug)]
+pub struct Subset {
+    pub numbers: Vec<u64>,
+    pub sum: i64
+}
 
 impl Subset {
     fn merge(mut s1: Subset, mut s2: Subset) -> Subset {

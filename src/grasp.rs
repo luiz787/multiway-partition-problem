@@ -2,17 +2,23 @@ use rand::prelude::IteratorRandom;
 use rand::thread_rng;
 use std::collections::BinaryHeap;
 
-use crate::common::{Partition, Subset};
-
 const CANDIDATES_LIST_SIZE: usize = 5;
+
+#[derive(Clone, Debug)]
+pub struct Partition {
+    pub subsets: Vec<Subset>,
+    pub maximum_sum: u64,
+}
+
+#[derive(Eq, Clone, PartialEq, Debug)]
+pub struct Subset {
+    pub numbers: Vec<u64>,
+    pub sum: i64
+}
 
 impl Partition {
     fn solution_quality(&self) -> u64 {
-        self.subsets
-            .iter()
-            .max_by(|s1, s2| s1.sum.cmp(&s2.sum))
-            .expect("Expected partition to be non-empty")
-            .sum as u64
+        self.maximum_sum
     }
 }
 
@@ -32,7 +38,7 @@ pub fn greedy_heuristic(nums: &Vec<u64>, k: u64) -> Partition {
     let mut i = 0;
 
     while !s.is_empty() {
-        println!("Greedy iter {}", i);
+        //println!("Greedy iter {}", i);
         i+=1;
 
         let mut candidates = Vec::new();
@@ -61,7 +67,12 @@ pub fn greedy_heuristic(nums: &Vec<u64>, k: u64) -> Partition {
         }
     }
 
-    let result = Partition { subsets: parts, maximum_sum: 0, minimum_sum: 0 };
+    let maximum_sum = parts.iter().map(|subset| subset.sum).max().unwrap() as u64;
+
+    let result = Partition {
+        subsets: parts,
+        maximum_sum: maximum_sum
+    };
     println!("Greedy quality: {}", result.solution_quality());
 
     result
@@ -71,7 +82,6 @@ pub fn grasp(nums: Vec<u64>, k: u64, max_iter: u64) -> Partition {
     let mut best: Option<Partition> = Option::None;
     let mut i = 0;
     while i < max_iter {
-        println!("Grasp, iter {}", i);
         let solution = greedy_heuristic(&nums, k);
         let solution = local_search(solution);
 
@@ -91,10 +101,7 @@ pub fn grasp(nums: Vec<u64>, k: u64, max_iter: u64) -> Partition {
 
 fn local_search(solution: Partition) -> Partition {
     let mut curr = solution;
-    let mut iter = 0;
     loop {
-        println!("Local Search iter {}", iter);
-        iter += 1;
         let neighbor = best_neighbor(&curr);
         let neighbor_is_better = neighbor.solution_quality() < curr.solution_quality();
 
@@ -120,6 +127,10 @@ fn best_neighbor(solution: &Partition) -> Partition {
                 current_neighbor.subsets[i].sum += (tmp2 as i64) - (tmp as i64);
                 current_neighbor.subsets[i + 1].numbers[k] = tmp;
                 current_neighbor.subsets[i + 1].sum += (tmp as i64) - (tmp2 as i64);
+
+                let max_of_new_subsets = current_neighbor.subsets[i].sum.max(current_neighbor.subsets[i + 1].sum);
+
+                current_neighbor.maximum_sum = solution.maximum_sum.max(max_of_new_subsets.try_into().unwrap());
                 let current_quality = current_neighbor.solution_quality();
 
                 let is_better = match best_quality {
@@ -134,7 +145,6 @@ fn best_neighbor(solution: &Partition) -> Partition {
             }
         }
     }
-    
 
     best_neighbor
         .expect("Expected partition to have neighbors")

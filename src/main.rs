@@ -3,13 +3,13 @@ use std::vec;
 pub mod karmarkar_karp;
 pub mod grasp;
 
-mod common;
-
 fn main() {
     let mut input = Vec::new();
-    for _ in 0..1000000 {
-        input.push(1);
+    for i in 0..1000 {
+        input.push(i);
     }
-    let result = karmarkar_karp::karmarkar_karp(input, 3);
+    let result = grasp::grasp(input, 3, 50);
+    // let result = karmarkar_karp::karmarkar_karp(input, 3);
+    //let result = grasp::greedy_heuristic(&input, 3);
     println!("{:#?}", result);
 }
